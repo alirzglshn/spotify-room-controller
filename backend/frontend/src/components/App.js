@@ -8,6 +8,7 @@ import Room from "./Room";
 export default class App extends Component {
   render() {
     return (
+      <div className="center">
       <Router>
         <Routes> 
           <Route path="/" element={<HomePage />} />
@@ -16,7 +17,7 @@ export default class App extends Component {
           <Route path="/room/:roomCode" element={<Room />}/>
         </Routes>
       </Router>
-      // <p>fuck you !!!!</p>
+      </div>
     );
   }
-}
+} 

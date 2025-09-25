@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   Grid,
@@ -14,6 +15,7 @@ import { Link } from "react-router-dom";
 
 export default function CreateRoomPage() {
   const defaultVotes = 2;
+  const navigate = useNavigate();
 
   const [guestCanPause, setGuestCanPause] = useState(true);
   const [votesToSkip, setVotesToSkip] = useState(defaultVotes);
@@ -37,7 +39,7 @@ export default function CreateRoomPage() {
     };
     fetch("/core/create-room", requestOptions)
       .then((response) => response.json())
-      .then((data) => console.log(data));
+       .then((data) => navigate('/room/' + data.code));
   };
 
   return (

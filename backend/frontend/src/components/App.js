@@ -9,16 +9,21 @@ export default class App extends Component {
   render() {
     return (
       <div className="center">
-      <Router>
-        <Routes> 
-          <Route path="/" element={<HomePage />} />
-          <Route path="/join" element={<RoomJoinPage />} />
-          <Route path="/create" element={<CreateRoomPage />} />
-          <Route path="/room/:roomCode" element={<Room />}/>
-        </Routes>
-      </Router>
+        <Router>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/join" element={<RoomJoinPage />} />
+            <Route path="/create" element={<CreateRoomPage />} />
+            {/* <Route path="/room/:roomCode" element={<Room />}/> */}
+            <Route
+              path="/room/:roomCode"
+              element={
+                <Room leaveRoomCallback={() => console.log("Left room")} />
+              }
+            />
+          </Routes>
+        </Router>
       </div>
     );
   }
-} 
- 
+}

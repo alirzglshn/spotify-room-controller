@@ -1,63 +1,96 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Button, Typography } from "@mui/material"; // React 19 style
+import { Grid, Button, Typography } from "@mui/material";
+
 import { useParams, useNavigate } from "react-router-dom";
+import CreateRoomPage from "./CreateRoomPage";
 
 export default function Room({ leaveRoomCallback }) {
-  const { roomCode } = useParams(); // grab room code from URL
-  const navigate = useNavigate();
-
   const [votesToSkip, setVotesToSkip] = useState(2);
   const [guestCanPause, setGuestCanPause] = useState(false);
   const [isHost, setIsHost] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
-  useEffect(() => {
-    async function getRoomDetails() {
-      try {
-        const response = await fetch(`/core/get-room?code=${roomCode}`);
+  const { roomCode } = useParams();
+  const navigate = useNavigate();
+
+  function getRoomDetails() {
+    fetch("/core/get-room?code=" + roomCode)
+      .then((response) => {
         if (!response.ok) {
           leaveRoomCallback();
           navigate("/");
           return;
         }
-        const data = await response.json();
-        setVotesToSkip(data.votes_to_skip);
-        setGuestCanPause(data.guest_can_pause);
-        setIsHost(data.is_host);
-      } catch (error) {
-        console.error("Error fetching room details:", error);
-        leaveRoomCallback();
-        navigate("/");
-      }
-    }
+        return response.json();
+      })
+      .then((data) => {
+        if (data) {
+          setVotesToSkip(data.votes_to_skip);
+          setGuestCanPause(data.guest_can_pause);
+          setIsHost(data.is_host);
+        }
+      });
+  }
 
+  useEffect(() => {
     getRoomDetails();
-  }, [roomCode, leaveRoomCallback, navigate]);
+  }, [roomCode]);
 
-  const leaveButtonPressed = async () => {
-    try {
-      const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      };
-      await fetch("/core/leave-room", requestOptions);
+  function leaveButtonPressed() {
+    fetch("/core/leave-room", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    }).then(() => {
       leaveRoomCallback();
-      console.log("Leaving room, navigating home...");
       navigate("/");
-    } catch (error) {
-      console.error("Error leaving room:", error);
-    }
-  };
+    });
+  }
+
+  function renderSettings() {
+    return (
+      <Grid container spacing={1}>
+        <Grid item xs={12} align="center">
+          <CreateRoomPage
+            update={true}
+            votesToSkip={votesToSkip}
+            guestCanPause={guestCanPause}
+            roomCode={roomCode}
+            updateCallback={getRoomDetails}
+          />
+        </Grid>
+        <Grid item xs={12} align="center">
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => setShowSettings(false)}
+          >
+            Close
+          </Button>
+        </Grid>
+      </Grid>
+    );
+  }
+
+  function renderSettingsButton() {
+    return (
+      <Grid item xs={12} align="center">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setShowSettings(true)}
+        >
+          Settings
+        </Button>
+      </Grid>
+    );
+  }
+
+  if (showSettings) {
+    return renderSettings();
+  }
 
   return (
-    <Grid
-      container
-      spacing={2}
-      direction="column"
-      alignItems="center"
-      justifyContent="center"
-      style={{ minHeight: "100vh" }} // optional, vertically center on page
-    >
+    <Grid container spacing={1}>
       <Grid item xs={12} align="center">
         <Typography variant="h4" component="h4">
           Code: {roomCode}
@@ -78,6 +111,9 @@ export default function Room({ leaveRoomCallback }) {
           Host: {isHost.toString()}
         </Typography>
       </Grid>
+     {console.log("isHost =", isHost)}
+{isHost ? renderSettingsButton() : null}
+
       <Grid item xs={12} align="center">
         <Button
           variant="contained"

@@ -90,7 +90,14 @@ export default function Room({ leaveRoomCallback }) {
   }
 
   return (
-    <Grid container spacing={1}>
+    <Grid
+      container
+      direction="column"
+      spacing={3}
+      style={{ minHeight: "100vh" }} // optional: full page height
+      justifyContent="center" // vertical center
+      alignItems="center" // horizontal center
+    >
       <Grid item xs={12} align="center">
         <Typography variant="h4" component="h4">
           Code: {roomCode}
@@ -111,8 +118,8 @@ export default function Room({ leaveRoomCallback }) {
           Host: {isHost.toString()}
         </Typography>
       </Grid>
-     {console.log("isHost =", isHost)}
-{isHost ? renderSettingsButton() : null}
+      {/* {console.log("isHost =", isHost)} */}
+      {isHost ? renderSettingsButton() : null}
 
       <Grid item xs={12} align="center">
         <Button

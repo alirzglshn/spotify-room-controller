@@ -1,4 +1,3 @@
-// HomePage.js
 import React, { useEffect, useState } from "react";
 import RoomJoinPage from "./RoomJoinPage";
 import CreateRoomPage from "./CreateRoomPage";

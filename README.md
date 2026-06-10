@@ -1,158 +1,136 @@
-🎵 Music Rooms Controller
+# Music Rooms Controller
 
-A real-time music room application built with Django REST Framework that integrates directly with the Spotify API. This project allows users to create music rooms, join existing rooms, and control music playback, all synced with their Spotify account.
+A Django REST Framework application that integrates with the Spotify API to let users create and join music rooms, control playback, and stay in sync with what others in the room are listening to.
 
-Note: The frontend of this project is already implemented using Webpack (no API documentation needed here). You just need to connect your Spotify account to get started.
+The frontend is already implemented using Webpack — no additional setup needed on that end. You just need a Spotify account to get started.
 
-🚀 Features
+---
 
-Create & Join Rooms: Host your own music room or join someone else’s.
+## Features
 
-Spotify Integration: Play music directly in your Spotify account.
+- Create and join rooms using a unique room code
+- Sync music playback directly through your Spotify account
+- Hosts can play, pause, and skip tracks
+- Guests can be granted permission to pause or vote on skipping
+- Real-time view of the currently playing song
 
-Control Playback: Play, pause, and manage the currently playing song.
+---
 
-Room Management: Hosts can allow guests to pause, skip songs, and vote on skipping.
+## Project Structure
 
-Real-time Updates: See what’s currently playing in the room.
-
-📦 Project Structure
-backend/                # Django project root
-│
-├── core/               # Main app for room management
-│   ├── models.py       # Room model
-│   ├── serializers.py  # Serializers for Room CRUD operations
-│   ├── views.py        # Room views (create, join, leave, update, get)
-│   └── urls.py         # Core app URLs
-│
-├── spotify/            # Spotify integration app
-│   ├── models.py       # SpotifyToken model
-│   ├── util.py         # Helper functions for Spotify API
-│   ├── views.py        # Spotify authentication and playback views
-│   ├── credentials.py  # Spotify CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
-│   └── urls.py         # Spotify app URLs
-│
-├── frontend/           # Frontend app (Webpack)
+```
+backend/
+├── core/                   # Room management
+│   ├── models.py
+│   ├── serializers.py
+│   ├── views.py
 │   └── urls.py
-│
-├── backend/            # Django project settings
+├── spotify/                # Spotify integration
+│   ├── models.py
+│   ├── util.py
+│   ├── views.py
+│   ├── credentials.py
+│   └── urls.py
+├── frontend/               # Webpack frontend
+│   └── urls.py
+├── backend/                # Django project settings
 │   ├── settings.py
 │   ├── urls.py
 │   └── wsgi.py
-└── db.sqlite3          # SQLite database
+└── db.sqlite3
+```
 
-⚡ How It Works
+---
 
-Create a Room
+## How It Works
 
-The creator becomes the host.
+**Creating a room** — The user who creates the room becomes the host. Hosts can configure whether guests are allowed to pause playback and how many votes are needed to skip a song.
 
-Host can configure room settings like allowing guests to pause or votes required to skip songs.
+**Joining a room** — Any user can join an existing room using its unique code.
 
-Join a Room
+**Spotify connection** — Each user authenticates with their own Spotify account. Whatever plays in the room plays in your Spotify client.
 
-Use a unique room code to join an existing room.
+**Playback control** — The host (and any guests with permission) can play, pause, and skip tracks. The currently playing song updates for everyone in the room.
 
-Connect to Spotify
+---
 
-Log in to your Spotify account.
+## Tech Stack
 
-Music played in the room is synced with Spotify, meaning the songs are actually playing in your Spotify account.
+- **Backend:** Django 4.2, Django REST Framework
+- **Frontend:** Webpack
+- **Database:** SQLite
+- **Auth:** Spotify OAuth2
+- **Music:** Spotify Web API
 
-Control Music
+---
 
-Hosts and allowed guests can play, pause, and skip tracks.
+## Setup
 
-Real-time updates ensure everyone in the room sees the same song.
+**1. Clone the repository**
 
-🔧 Technology Stack
-
-Backend: Django 4.2, Django REST Framework
-
-Frontend: Webpack
-
-Database: SQLite
-
-Authentication: Spotify OAuth2 API
-
-APIs: Spotify Web API for playback control
-
-🛠 Setup
-
-Clone the repository
-
+```bash
 git clone https://github.com/alirzglshn/spotify-room-controller.git
 cd spotify-room-controller
+```
 
+**2. Create a virtual environment and install dependencies**
 
-Create a virtual environment & install dependencies
-
+```bash
 python -m venv venv
-source venv/bin/activate   # Linux / macOS
-venv\Scripts\activate      # Windows
+source venv/bin/activate        # Linux / macOS
+venv\Scripts\activate           # Windows
 pip install -r requirements.txt
+```
 
+**3. Add your Spotify credentials**
 
-Configure Spotify credentials
+Open `spotify/credentials.py` and fill in your `CLIENT_ID`, `CLIENT_SECRET`, and `REDIRECT_URI`.
 
-Add your CLIENT_ID, CLIENT_SECRET, and REDIRECT_URI in spotify/credentials.py.
+**4. Run migrations**
 
-Run migrations
-
+```bash
 python manage.py migrate
+```
 
+**5. Start the development server**
 
-Run the development server
-
+```bash
 python manage.py runserver
+```
 
+Open `http://127.0.0.1:8000` in your browser.
 
-Access the frontend
+---
 
-The frontend is handled via the frontend app and Webpack. Open your browser at http://127.0.0.1:8000 to start using the app.
+## API Reference
 
-🎯 Endpoints Overview (Backend)
+### Core (`/core/`)
 
-While you don’t need API docs for the frontend, here’s a quick reference:
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/room` | List all rooms |
+| POST | `/create-room` | Create a new room |
+| GET | `/get-room?code=<room_code>` | Get a specific room |
+| POST | `/join-room` | Join a room |
+| POST | `/leave-room` | Leave a room |
+| PATCH | `/update-room` | Update room settings |
+| GET | `/user-in-room` | Check which room the user is in |
 
-Core App (/core/)
+### Spotify (`/spotify/`)
 
-GET /room - List all rooms
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/get-auth-url` | Get the Spotify OAuth URL |
+| GET | `/redirect` | Spotify OAuth callback |
+| GET | `/is-authenticated` | Check authentication status |
+| GET | `/current-song` | Get the currently playing song |
+| PUT | `/play` | Resume playback |
+| PUT | `/pause` | Pause playback |
 
-POST /create-room - Create a new room
+---
 
-GET /get-room?code=<room_code> - Get a specific room
+## Notes
 
-POST /join-room - Join a room
-
-POST /leave-room - Leave a room
-
-PATCH /update-room - Update room settings
-
-GET /user-in-room - Check which room the user is in
-
-Spotify App (/spotify/)
-
-GET /get-auth-url - Get Spotify OAuth URL
-
-GET /redirect - Spotify OAuth callback
-
-GET /is-authenticated - Check Spotify authentication
-
-GET /current-song - Get currently playing song
-
-PUT /play - Play current song
-
-PUT /pause - Pause current song
-
-⚠ Notes
-
-This project requires Spotify Premium to control playback.
-
-The frontend is prebuilt and fully functional with the backend.
-
-Sessions are used to track users and hosts for room functionality.
-
-
-
-THANKS FOR VIEWING THIS REPOSITORY
+- Spotify Premium is required for playback control.
+- Sessions are used to track users and identify room hosts.
+- The frontend is prebuilt and works with the backend out of the box.

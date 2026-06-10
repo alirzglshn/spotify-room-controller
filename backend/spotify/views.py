@@ -54,11 +54,7 @@ def spotify_callback(request, format=None):
     return redirect('frontend:index')
     
     
-    # room_code = request.session.get('room_code', '')
-    # if room_code:
-    #     return redirect(f'/room/{room_code}')
-    # else:
-    #     return redirect('frontend:index')
+    
 
 
 

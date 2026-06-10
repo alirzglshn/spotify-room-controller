@@ -27,12 +27,12 @@ def update_or_create_user_tokens(session_id, access_token, token_type, expires_i
         tokens.access_token = access_token
         tokens.token_type = token_type
         tokens.expires_in = expires_in
-        # Only update refresh_token if it's not None
+        
         if refresh_token:
             tokens.refresh_token = refresh_token
         tokens.save(update_fields=['access_token', 'token_type', 'expires_in', 'refresh_token'])
     else:
-        # On first creation, refresh_token must exist
+        
         tokens = SpotifyToken(
             user=session_id,
             access_token=access_token,
@@ -56,7 +56,7 @@ def refresh_spotify_token(session_id):
     access_token = response.get('access_token')
     token_type = response.get('token_type')
     expires_in = response.get('expires_in')
-    # refresh_token = response.get('refresh_token')
+    
 
     update_or_create_user_tokens(
         session_id, access_token, token_type, expires_in, refresh_token)

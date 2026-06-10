@@ -15,28 +15,7 @@ export default function Room({ leaveRoomCallback }) {
   const { roomCode } = useParams();
   const navigate = useNavigate();
 
-  // function getRoomDetails() {
-  //   return fetch("/core/get-room?code=" + roomCode)
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         leaveRoomCallback();
-  //         navigate("/");
-  //         return;
-  //       }
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       if (data) {
-  //         setVotesToSkip(data.votes_to_skip);
-  //         setGuestCanPause(data.guest_can_pause);
-  //         setIsHost(data.is_host);
-
-  //         if (data.is_host) {
-  //           authenticateSpotify();
-  //         }
-  //       }
-  //     });
-  // }
+    
 
   function getRoomDetails() {
     if (!roomCode) return; // skip if roomCode is empty
